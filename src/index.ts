@@ -4,9 +4,9 @@ import { handleWebhookRequest } from './webhook.js';
 import { scanRepositories } from './managing.js';
 import pm2 from './pm2.js';
 
-const scanDirs = process.argv[2].split(',');
+const scanDirs = process.argv[2]?.split(',');
 
-if (scanDirs === null || scanDirs.length === 0) {
+if (!scanDirs || scanDirs.length === 0) {
     const msg =  `No scan directory provided.
 usage)
  $ node dist {SCAN_DIR_1,SCAN_DIR_2,...}

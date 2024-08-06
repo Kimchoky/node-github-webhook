@@ -4,7 +4,7 @@ const execPromise = util.promisify(exec);
 
 async function pm2Exists() {
     try {
-        const { stdout } = await execPromise(`pm2 v`);
+        const { stdout } = await execPromise(`pm2 -v`);
         return true;
     }
     catch (e) {
