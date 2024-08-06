@@ -4,10 +4,18 @@ import { handleWebhookRequest } from './webhook.js';
 import { scanRepositories } from './managing.js';
 import pm2 from './pm2.js';
 
-//const repositories = process.argv[2].split(',');
-const scanDirs = [
-    '/Users/tvdi240281/IdeaProjects',
-];
+const scanDirs = process.argv[2].split(',');
+
+if (scanDirs === null || scanDirs.length === 0) {
+    const msg =  `No scan directory provided.
+usage)
+ $ node dist {SCAN_DIR_1,SCAN_DIR_2,...}
+example)
+ $ node dist /App,/anotherAppRoot
+`;
+    throw new Error(msg);
+}
+
 scanRepositories(scanDirs);
 
 
