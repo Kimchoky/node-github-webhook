@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "rm -r ./dist",
     "test": "tsc && node ./dist me,webhook",
-    "build": "clean && tsc"
+    "build": "npm run clean && tsc"
   },
   "repository": {
     "type": "git",

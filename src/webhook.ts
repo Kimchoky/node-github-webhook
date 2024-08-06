@@ -31,7 +31,12 @@ export function handleWebhookRequest(req: IncomingMessage): boolean {
             const branchPath = body?.ref;   // 'refs/heads/test'
             const pusherName = body?.pusher?.name;
             const pusherEmail = body?.pusher?.email;
-            console.log(`  - from : ${repoName} - ${branchPath} pushed by [${pusherName}(${pusherEmail})]`)
+            console.log(`  - from : ${repoName??'?'} - ${branchPath??'?'} pushed by [${pusherName??'?'}(${pusherEmail??'?'})]`)
+
+            if (!repoName || !branchPath || !pusherName) {
+                console.warn('Looks like request is from GitHub, no push data found.');
+                return;
+            }
 
             const repo = repositories.find(r => r.name === repoName);
             if (!repo) {
@@ -41,12 +46,11 @@ export function handleWebhookRequest(req: IncomingMessage): boolean {
                 const branchName = path.basename(branchPath);
                 console.log(`Updating --> Repository: [${repoName}], Branch: [${branchName}]`);
 
+                // TODO: provide how to restart an app.
                 await pm2.stop(repo.name);
                 await update(repo, branchName);
                 await pm2.start(repo.name);
                 
-                // TODO: provide how to restart an app.
-                pm2.stop(repo.name);
             }
         });
 
