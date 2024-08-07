@@ -1,9 +1,9 @@
-type BuildManage = {
+interface BuildManage {
     repoName: string,
     branchName: string,
 }
 
-type Repository = {
+interface Repository {
     name: string,
     cwd: string,
 }

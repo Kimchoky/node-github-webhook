@@ -4,8 +4,9 @@ import { handleWebhookRequest } from './webhook.js';
 import { scanRepositories } from './managing.js';
 import pm2 from './pm2.js';
 
-const scanDirs = process.argv[2]?.split(',');
+console.log('process.argv', process.argv);
 
+const scanDirs = process.argv[2]?.split(',');
 if (!scanDirs || scanDirs.length === 0) {
     const msg =  `No scan directory provided.
 usage)
@@ -16,6 +17,8 @@ example)
     throw new Error(msg);
 }
 
+const usePm2 = process.argv.findIndex(v => v === '--nopm2') === -1;
+
 scanRepositories(scanDirs);
 
 
@@ -25,7 +28,7 @@ await (async () => {
     if (!await checkGitExists())
         throw new Error("No git found!");
 
-    if (!await pm2.pm2Exists())
+    if (usePm2 && !await pm2.pm2Exists())
         throw new Error("No PM2 found!");
     
 })();
