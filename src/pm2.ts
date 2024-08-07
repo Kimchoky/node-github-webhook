@@ -25,12 +25,12 @@ async function checkInfo(name: string) {
 
 async function start(name: string) {
     console.log(`[pm2] starting App: [${name}] ...`);
-    execPromise(`pm2 stop ${name}`);
+    execPromise(`pm2 start ${name}`);
 }
 
 async function stop(name: string) {
     console.log(`[pm2] stopping App: [${name}] ...`);
-    execPromise(`pm2 start ${name}`);
+    execPromise(`pm2 stop ${name}`);
 }
 
 
