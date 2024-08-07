@@ -25,7 +25,7 @@ async function revertCurrent(cwd: string) {
     const commands = [
         `git restore .`,
         `git clean --force -d -x`,
-        `git reset --hard .`,
+        `git reset --hard`,
     ];
     console.log(`[git] reverting ...`);
     const { stdout } = await execPromise(commands.join(' && '), opt);

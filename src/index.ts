@@ -1,8 +1,9 @@
-import http, { IncomingMessage } from 'http';
+import http, { IncomingMessage } from 'node:http';
 import { checkGitExists, getCurrentBranchName } from './git-cmd.js'; 
-import { handleWebhookRequest } from './webhook.js';
+import { handleWebhookRequest, isWebhookRequest } from './webhook-handler.js';
 import { scanRepositories } from './managing.js';
 import pm2 from './pm2.js';
+import { handleJobRequest, isJobRequest } from './job-handler.js';
 
 console.log('process.argv', process.argv);
 
@@ -34,21 +35,27 @@ await (async () => {
 })();
 
 console.log('# Starting http server...');
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
 
     const url = new URL(`http://${process.env.HOST ?? 'localhost'}${req.url}`);
     const pathname = url.pathname;
 
     console.log('Incoming request URI => ' + pathname);
 
-    if (handleWebhookRequest(req)) {
-        res.end(JSON.stringify({ ok: true }));
+    let result = null;
+    if (isWebhookRequest(req)) {
+        result = handleWebhookRequest(req);
+    }
+    else if (isJobRequest(req)) {
+        result = await handleJobRequest(req);
     }
     else {
         console.log('Rejecting request(Non-GitHub Webhook request).');
         res.statusCode = 401;
-        res.end(JSON.stringify({ oK: false, message: 'Forbidden' }));
+        result = { oK: false, message: 'Forbidden' };
     }
+    
+    res.end(JSON.stringify(result));
 
 }).listen(8080);
 
